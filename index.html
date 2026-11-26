@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0b10">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="icon" href="data:,">
+<title>ClipKaro</title>
+<style>
+:root{--bg:#0b0b10;--s1:#14141c;--s2:#1c1c27;--ln:rgba(255,255,255,.09);--tx:#f4f4f8;--mu:#9b9bb2;--g:linear-gradient(135deg,#ff7a1a,#ff2d75 60%,#7c3cff);--ac:#ff4d6d;--ok:#3ddc84;--bad:#ff5c6c;color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(900px 500px at 50% -10%,rgba(255,45,117,.18),transparent 60%),var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Devanagari",sans-serif;padding:env(safe-area-inset-top,0) 0 0}
+main{max-width:520px;margin:0 auto;padding:14px 16px calc(110px + env(safe-area-inset-bottom,0))}
+.hdr{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.hdr svg{width:46px;height:46px;flex:none;filter:drop-shadow(0 6px 14px rgba(255,45,117,.35))}
+.hdr h1{margin:0;font-size:25px;letter-spacing:-.4px;line-height:1.05}
+.hdr h1 b{background:var(--g);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hdr p{margin:2px 0 0;color:var(--mu);font-size:13px}
+.gear{margin-left:auto;width:42px;height:42px;border-radius:14px;background:var(--s1);border:1px solid var(--ln);color:var(--tx);font-size:20px;padding:0;display:flex;align-items:center;justify-content:center}
+.stage{position:relative;display:flex;flex-direction:column;align-items:center;padding:16px 0 6px}
+.stage:before{content:"";position:absolute;inset:8% 14% 22%;background:var(--g);filter:blur(70px);opacity:.3;border-radius:50%}
+.phone{position:relative;padding:8px;border-radius:34px;background:linear-gradient(160deg,#2a2a38,#000);border:1px solid var(--ln);box-shadow:0 24px 60px rgba(0,0,0,.6)}
+.phone canvas{display:block;width:216px;height:384px;border-radius:26px;background:#000}
+.cap{position:relative;margin:12px 6px 0;text-align:center;color:var(--mu);font-size:12.5px}
+.row{position:relative;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.card{background:var(--s1);border:1px solid var(--ln);border-radius:20px;padding:14px;margin:14px 0}
+.card>h2{display:flex;align-items:center;gap:10px;margin:0 0 10px;font-size:16px}
+.card>h2 i{font-style:normal;width:24px;height:24px;border-radius:8px;background:var(--g);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff}
+.lbl{display:block;color:var(--mu);font-size:12.5px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;margin:14px 0 6px}
+.lbl b{color:var(--tx);text-transform:none;letter-spacing:0}
+input,select,textarea{width:100%;padding:13px 14px;border-radius:14px;border:1px solid var(--ln);background:var(--s2);color:var(--tx);font:inherit;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--ac);box-shadow:0 0 0 3px rgba(255,77,109,.18)}
+input[type=range]{padding:0;height:34px;background:none;border:0;box-shadow:none;accent-color:#ff4d6d}
+input[type=color]{height:46px;padding:3px}
+textarea{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;min-height:74px}
+button{font:inherit;color:var(--tx);cursor:pointer}
+.btn{border:1px solid var(--ln);background:var(--s2);border-radius:14px;padding:11px 14px;font-weight:600}
+.btn.sm{padding:8px 12px;font-size:13px;border-radius:12px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{flex:1 1 auto;min-width:0;border:1px solid var(--ln);background:var(--s2);border-radius:12px;padding:10px 8px;font-weight:600;font-size:14px}
+.seg button.on{background:var(--g);border-color:transparent;color:#fff;box-shadow:0 6px 18px rgba(255,45,117,.3)}
+.tgs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tgs button{display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left;border:1px solid var(--ln);background:var(--s2);border-radius:14px;padding:11px 12px;font-weight:600;font-size:14px}
+.tgs button:after{content:"";width:34px;height:20px;border-radius:20px;background:#3a3a4d;flex:none;background-image:radial-gradient(circle at 10px 10px,#fff 7px,transparent 8px);background-repeat:no-repeat;transition:.15s}
+.tgs button.on{border-color:rgba(255,77,109,.5)}
+.tgs button.on:after{background-color:#ff4d6d;background-image:radial-gradient(circle at 24px 10px,#fff 7px,transparent 8px)}
+.strip{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 8px;scroll-snap-type:x proximity;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.it{flex:none;text-align:center;scroll-snap-align:start;background:none;border:0;padding:0;font-size:12px;color:var(--mu);font-weight:600;max-width:90px}
+.it canvas{display:block;width:84px;height:150px;border-radius:14px;border:2px solid var(--ln);transition:.15s}
+.it.gr canvas{width:68px;height:68px}
+.it.on canvas{border-color:#ff4d6d;box-shadow:0 0 0 3px rgba(255,77,109,.25)}
+.it.on{color:var(--tx)}
+.it span{display:block;margin-top:5px;text-transform:capitalize}
+.it small{display:block;font-size:10.5px;font-weight:500;color:var(--mu);margin-top:1px}
+details{border-top:1px solid var(--ln);margin-top:14px;padding-top:12px}
+details summary{list-style:none;cursor:pointer;font-weight:700;display:flex;align-items:center;justify-content:space-between}
+details summary::-webkit-details-marker{display:none}
+details summary:after{content:"›";font-size:22px;color:var(--mu);transform:rotate(90deg);transition:.15s}
+details[open] summary:after{transform:rotate(-90deg)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hint{color:var(--mu);font-size:13px;margin:6px 0 0}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:30;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0));background:linear-gradient(180deg,rgba(11,11,16,0),rgba(11,11,16,.92) 35%)}
+.barin{display:flex;gap:12px;align-items:center;max-width:520px;margin:0 auto}
+.go{display:block;width:100%;border:0;border-radius:18px;padding:16px;font-size:17px;font-weight:800;color:#fff;background:var(--g);box-shadow:0 10px 30px rgba(255,45,117,.35)}
+.go:disabled{opacity:.6}
+.barin .go{flex:1;width:auto}
+.mini{display:none;flex:none;padding:3px;border-radius:14px;background:#000;border:1px solid var(--ln);box-shadow:0 8px 22px rgba(0,0,0,.5)}
+.mini.show{display:block}
+.mini canvas{display:block;width:44px;height:78px;border-radius:11px}
+.toast{position:fixed;left:50%;bottom:calc(108px + env(safe-area-inset-bottom,0));transform:translate(-50%,160%);opacity:0;pointer-events:none;z-index:60;max-width:calc(100% - 28px);padding:12px 16px;border-radius:14px;background:var(--s2);border:1px solid var(--ln);box-shadow:0 12px 30px rgba(0,0,0,.5);font-weight:600;font-size:14px;transition:.25s}
+.toast.show{transform:translate(-50%,0);opacity:1}
+.toast.ok{border-color:rgba(61,220,132,.5)}.toast.bad{border-color:rgba(255,92,108,.6)}
+.stat{display:flex;gap:12px;align-items:center}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--mu);flex:none}
+.dot.run{background:#ffb020;animation:pulse 1.1s infinite}.dot.ok{background:var(--ok)}.dot.bad{background:var(--bad)}
+@keyframes pulse{50%{opacity:.35;transform:scale(.8)}}
+.shim{height:6px;border-radius:6px;background:var(--s2);overflow:hidden;margin:10px 0}
+.shim i{display:block;height:100%;width:40%;background:var(--g);animation:slide 1.4s infinite}
+@keyframes slide{0%{margin-left:-40%}100%{margin-left:100%}}
+.run{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--ln);font-size:14px}
+.run:last-child{border-bottom:0}
+.sheet{position:fixed;inset:0;z-index:50;display:none;align-items:flex-end;background:rgba(0,0,0,.6)}
+.sheet.open{display:flex}
+.sheet>div{width:100%;max-width:520px;margin:0 auto;max-height:92vh;overflow:auto;background:var(--s1);border:1px solid var(--ln);border-radius:26px 26px 0 0;padding:18px 16px calc(20px + env(safe-area-inset-bottom,0))}
+.sheet h3{margin:0 0 4px;font-size:19px}
+.steps{margin:8px 0 0;padding-left:20px;color:var(--mu);font-size:13.5px}
+.steps li{margin:3px 0}
+.steps b{color:var(--tx)}
+.msg{min-height:20px;font-size:13.5px;margin-top:10px;font-weight:600}
+.msg.ok{color:var(--ok)}.msg.bad{color:var(--bad)}
+</style>
+</head>
+<body>
+<main>
+<header class="hdr">
+<svg id="brand" viewBox="0 0 512 512" aria-label="ClipKaro logo"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff7a1a"/><stop offset=".55" stop-color="#ff2d75"/><stop offset="1" stop-color="#7c3cff"/></linearGradient></defs><rect width="512" height="512" rx="112" fill="url(#lg)"/><rect x="168" y="84" width="176" height="312" rx="34" fill="rgba(255,255,255,.14)" stroke="#fff" stroke-width="14"/><path d="M232 166 L232 258 Q232 270 243 264 L312 218 Q322 212 312 206 L243 160 Q232 154 232 166 Z" fill="#fff"/><rect x="204" y="296" width="104" height="20" rx="10" fill="#fff"/><rect x="224" y="328" width="64" height="20" rx="10" fill="#ffe600"/><path d="M392 104 l8 22 22 8 -22 8 -8 22 -8 -22 -22 -8 22 -8z" fill="#ffe600"/></svg>
+<div><h1>Clip<b>Karo</b></h1><p>Long video to viral shorts, in one tap</p></div>
+<button class="gear" id="gear" aria-label="Connect GitHub">⚙</button>
+</header>
+
+<section class="stage" id="stage">
+<div class="phone"><canvas id="cv" width="270" height="480"></canvas></div>
+<div class="cap">Emoji stickers change with the words: never 🚫 · mistake ❌ · money 💰 · secret 🤫 · fast ⚡</div>
+<div class="row">
+<button class="btn sm" id="lang" type="button">Preview text: हिंदी</button>
+<label class="btn sm" style="margin:0">Use my video frame<input id="vf" type="file" accept="video/*" hidden></label>
+</div>
+</section>
+
+<section class="card">
+<h2><i>1</i>Video</h2>
+<label class="lbl" for="url" style="margin-top:0">Video link</label>
+<input id="url" type="text" inputmode="url" autocomplete="off" placeholder="Google Drive or Dropbox link (anyone with the link)">
+<p class="hint">Upload the video to Google Drive, set sharing to “Anyone with the link”, then paste the link here.</p>
+</section>
+
+<section class="card">
+<h2><i>2</i>Caption style</h2>
+<div class="strip" id="chips"></div>
+<span class="lbl">Text effects</span>
+<div class="tgs" id="fx"></div>
+<span class="lbl">Position</span>
+<div class="seg" id="posseg"></div>
+<span class="lbl">Words at a time</span>
+<div class="seg" id="wordseg"></div>
+<details><summary>Fine-tune colors, size and outline</summary><div id="adv1"></div></details>
+</section>
+
+<section class="card">
+<h2><i>3</i>Effects</h2>
+<div class="tgs" id="tg"></div>
+<span class="lbl">Auto zoom on strong moments</span>
+<div class="seg" id="zoom"></div>
+<span class="lbl">Color look</span>
+<div class="strip" id="grade"></div>
+<span class="lbl">Frame</span>
+<div class="seg" id="frame"></div>
+<span class="lbl">Logo or @handle</span>
+<div class="two">
+<input id="logo" placeholder="@yourname">
+<select id="logopos"><option value="tr">Top right</option><option value="tl">Top left</option><option value="br">Bottom right</option><option value="bl">Bottom left</option></select>
+</div>
+<span class="lbl">Logo image file (optional)</span>
+<input id="logoimg" placeholder="logo.png (uploaded to your GitHub repo)">
+<details><summary>Emoji sticker and hook settings</summary><div id="adv2"></div></details>
+</section>
+
+<section class="card">
+<h2><i>4</i>Clips</h2>
+<span class="lbl" style="margin-top:0">Max length</span>
+<div class="seg" id="length"></div>
+<span class="lbl">How many clips</span>
+<div class="seg" id="count"></div>
+<span class="lbl">Speech model</span>
+<div class="seg" id="model"></div>
+<p class="hint">base is faster. small understands Hindi better but takes longer.</p>
+<span class="lbl">Exact times (optional)</span>
+<input id="ranges" placeholder="1:20-1:50, 5:00-5:45">
+<details><summary>Advanced: settings code</summary>
+<span class="lbl">Current code (auto)</span><textarea id="code" readonly></textarea>
+<span class="lbl">Paste your own code (leave empty to use the choices above)</span><textarea id="custom"></textarea>
+</details>
+</section>
+
+<section class="card" id="status" hidden>
+<div class="stat"><span class="dot" id="st_d"></span><b id="st_t"></b></div>
+<div class="shim" id="st_bar" hidden><i></i></div>
+<div class="hint" id="st_s"></div>
+<div class="seg" id="st_b" style="margin-top:10px"></div>
+</section>
+
+<section class="card">
+<h2><i>5</i>Recent runs</h2>
+<div id="hist"><span class="hint">Nothing yet. Your clips will show up here.</span></div>
+</section>
+</main>
+
+<div class="bar"><div class="barin"><div class="mini" id="mini" title="Back to preview"><canvas id="mc" width="108" height="192"></canvas></div><button class="go" id="go">Generate clips</button></div></div>
+<div class="toast" id="toast" role="status"></div>
+
+<div class="sheet" id="sheet">
+<div>
+<h3>Connect GitHub</h3>
+<p class="hint">One time setup. Your token stays only in this browser and is sent only to GitHub.</p>
+<ol class="steps">
+<li>GitHub → your photo → <b>Settings → Developer settings → Personal access tokens → Fine-grained tokens</b></li>
+<li><b>Generate new token</b>, pick <b>Only select repositories</b> → your clipkaro repo</li>
+<li>Repository permissions → <b>Actions: Read and write</b></li>
+<li>Generate, copy the token and paste it below</li>
+</ol>
+<span class="lbl">GitHub token</span>
+<input id="token" type="password" autocomplete="off" placeholder="github_pat_...">
+<div class="two">
+<div><span class="lbl">Username</span><input id="owner" value="zerofiker"></div>
+<div><span class="lbl">Repository</span><input id="repo" value="clipkaro"></div>
+</div>
+<div class="two">
+<div><span class="lbl">Workflow file</span><input id="wf" value="main.yml"></div>
+<div><span class="lbl">Branch</span><input id="ref" value="main"></div>
+</div>
+<div class="msg" id="cmsg"></div>
+<div class="two" style="margin-top:12px">
+<button class="btn" id="test" type="button">Test connection</button>
+<button class="go" id="save" type="button" style="padding:13px;font-size:16px;box-shadow:none">Save</button>
+</div>
+</div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const P=(size,text,hl,outline,ow,pos,upper,words,pop,box,glow)=>({size,text,hl,outline,ow,pos,upper,words,pop,box,glow});
+const PRESETS={
+  karaoke:P(80,'#FFFFFF','#FFE600','#000000',7,27,'auto',3,0,0,0),
+  hormozi:P(88,'#FFFFFF','#00E04B','#000000',9,30,'1',2,1,0,0),
+  mrbeast:P(104,'#FFE600','#FFFFFF','#000000',12,30,'1',2,1,0,0),
+  gta:P(88,'#FFFFFF','#00F0FF','#FF2BD6',6,28,'1',3,1,0,1),
+  impact:P(100,'#FFFFFF','#FF3B30','#000000',11,26,'1',3,0,0,0),
+  clean:P(72,'#FFFFFF','#FFFFFF','#000000',4,27,'auto',4,0,0,0),
+  boxed:P(74,'#FFFFFF','#FFE600','#000000',0,27,'auto',3,0,1,0),
+  fire:P(96,'#FFD400','#FF3B30','#3B0A00',10,28,'1',2,1,0,1),
+  ice:P(88,'#FFFFFF','#00D4FF','#0A3A8A',8,28,'1',3,0,0,1),
+  gold:P(92,'#FFD54A','#FFFFFF','#5A3A00',9,29,'1',2,1,0,0),
+  retro:P(88,'#00F0FF','#FFE600','#FF2BD6',7,28,'1',3,0,0,1),
+  comic:P(96,'#FFE600','#FF3B30','#000000',14,30,'1',2,1,0,0),
+  minimal:P(64,'#FFFFFF','#FFFFFF','#000000',3,24,'auto',4,0,0,0),
+  oneword:P(130,'#FFFFFF','#FFE600','#000000',12,40,'1',1,1,0,0),
+  subtitle:P(58,'#FFFFFF','#FFFFFF','#000000',0,18,'auto',5,0,1,0),
+  top:P(80,'#FFFFFF','#FFE600','#000000',7,68,'auto',3,0,0,0)
+};
+const GRADES={none:'Normal',cinematic:'Cinematic',warm:'Warm',cool:'Cool',bw:'B&W',vivid:'Vivid'};
+const GR={cinematic:'contrast(1.1) saturate(1.15)',warm:'sepia(.25) saturate(1.1)',cool:'hue-rotate(12deg) saturate(1.05)',bw:'grayscale(1)',vivid:'saturate(1.45) contrast(1.08)'};
+const TOG=[['emoji','Emoji stickers'],['hook','Hook text'],['jump','Cut silences'],['part','PART 1/2/3 tag'],['bar','Progress bar'],['sfx','Sound effects']];
+const BASE={preset:'karaoke',hlKeep:'#FFE600',hooksize:84,hookcolor:'#FFE600',hookpos:13,emsize:230,zoom:'off',frame:'fit',grade:'none',hook:1,emoji:1,jump:0,part:0,bar:0,sfx:0,every:2.5,empos:0,emap:'',logo:'',logopos:'tr',logoimg:''};
+const S=Object.assign({},BASE,PRESETS.karaoke);
+const F={length:'60',count:'3',model:'base'};
+const SAMPLE={hi:['कभी','ये','गलती','मत','करो','पैसा','कमाने','का','राज़','तेज़'],en:['never','make','this','mistake','with','your','money','secret','is','fast']};
+const EM={never:'🚫',mistake:'❌',money:'💰',secret:'🤫',fast:'⚡','कभी':'🚫','गलती':'❌','पैसा':'💰','राज़':'🤫','तेज़':'⚡'};
+const HOOK={hi:'ये राज़ कोई नहीं बताता',en:'Nobody tells you this'};
+let lang='hi',bg=null;
+const ls={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:v}catch(_){return d}},set(k,v){try{localStorage.setItem(k,v)}catch(_){}}};
+const cl=t=>String(t||'').replace(/[;=]/g,'').trim();
+const hx=c=>c.replace('#','').toUpperCase();
+const hlOn=()=>S.hl.toLowerCase()!==S.text.toLowerCase();
+let toastT=null;
+function toast(t,c){const e=$('#toast');e.textContent=t;e.className='toast show '+(c||'');clearTimeout(toastT);toastT=setTimeout(()=>e.className='toast',3200)}
+
+/* ---------- drawing (preview + thumbnails) ---------- */
+function backdrop(cx,W,H){
+  const g=cx.createLinearGradient(0,0,W,H);g.addColorStop(0,'#3a3f5c');g.addColorStop(1,'#12131c');cx.fillStyle=g;cx.fillRect(0,0,W,H);
+  [['#e53935',.25,.30,.13],['#43a047',.72,.26,.10],['#1e88e5',.30,.62,.12],['#fdd835',.75,.58,.09]].forEach(c=>{cx.fillStyle=c[0];cx.beginPath();cx.arc(W*c[1],H*c[2],W*c[3],0,7);cx.fill()});
+  cx.fillStyle='#f1c9a5';cx.beginPath();cx.arc(W*.5,H*.40,W*.16,0,7);cx.fill();
+  cx.fillStyle='#37474f';cx.fillRect(W*.30,H*.48,W*.40,H*.18);
+}
+function draw(cx,W,H,st,o){
+  const k=W/1080,tick=o.tick||0,T=o.t||0;
+  cx.clearRect(0,0,W,H);
+  let z=1;
+  if(!o.mini&&st.zoom!=='off'){const amp=st.zoom==='strong'?.16:.08,c=(tick%150)/150;z=1+amp*(c<.4?Math.sin(Math.PI*c/.4):0)}
+  cx.save();cx.translate(W/2,H/2);cx.scale(z,z);cx.translate(-W/2,-H/2);
+  cx.filter=GR[st.grade]||'none';
+  if(o.bg)cx.drawImage(o.bg,0,0,W,H);else backdrop(cx,W,H);
+  cx.filter='none';cx.restore();
+  cx.textBaseline='alphabetic';cx.lineJoin='round';cx.shadowBlur=0;
+  const up=st.upper==='1'||(st.upper==='auto'&&o.lang==='en');
+  const font=w=>'800 '+w+'px system-ui,"Noto Sans Devanagari",sans-serif';
+  const src=o.mini?(o.lang==='en'?['the','big','secret']:['बड़ा','राज़','है']):SAMPLE[o.lang];
+  const words=src.map(w=>up?w.toUpperCase():w);
+  const n=+st.words,abs=Math.floor(T/450),idx=o.mini?1:abs%words.length,base=Math.floor(idx/n)*n;
+  const chunk=words.slice(base,base+n),cur=idx-base,fs=st.size*k*(o.mini?1.5:1);
+  cx.font=font(fs);
+  const gap=fs*.28,ws=chunk.map(w=>cx.measureText(w).width),total=ws.reduce((a,b)=>a+b,0)+gap*(chunk.length-1);
+  const bottom=H-st.pos/100*H;let x=(W-total)/2;
+  if(!o.mini&&+st.emoji){
+    const em=src.slice(base,base+n).map(w=>EM[w.toLowerCase()]).find(Boolean);
+    if(em){
+      const el=T-(abs-cur)*450,p=Math.min(1,el/260),c1=1.70158,c3=c1+1,eb=1+c3*Math.pow(p-1,3)+c1*Math.pow(p-1,2),sc=Math.max(.2,.35+.65*eb);
+      const eh=st.emsize*k;cx.save();cx.translate(W/2,bottom-st.size*2.5*k-eh*.4-st.empos*k);cx.scale(sc,sc);
+      cx.font=Math.round(eh*.85)+'px system-ui,"Apple Color Emoji","Noto Color Emoji",sans-serif';cx.textAlign='center';cx.fillStyle='#fff';cx.fillText(em,0,0);cx.restore();
+    }
+  }
+  cx.textAlign='left';cx.font=font(fs);
+  if(+st.box){cx.fillStyle='rgba(0,0,0,.6)';const pad=fs*.25;cx.beginPath();cx.roundRect(x-pad,bottom-fs-pad*.3,total+pad*2,fs*1.25+pad*.6,fs*.18);cx.fill()}
+  chunk.forEach((w,i)=>{
+    const on=i===cur&&(hlOnS(st)||+st.pop),sc=on&&+st.pop?1.18:1;
+    cx.save();cx.translate(x+ws[i]/2,bottom-fs*.15);cx.scale(sc,sc);cx.font=font(fs);cx.textAlign='center';
+    if(+st.glow){cx.shadowColor=st.outline;cx.shadowBlur=Math.max(4,36*k)}
+    if(!+st.box&&st.ow>0){cx.lineWidth=st.ow*2*k;cx.strokeStyle=st.outline;cx.strokeText(w,0,0)}
+    cx.fillStyle=on&&hlOnS(st)?st.hl:st.text;cx.fillText(w,0,0);cx.restore();x+=ws[i]+gap;
+  });
+  cx.shadowBlur=0;
+  if(o.mini)return;
+  if(+st.hook){
+    const hs=st.hooksize*k;cx.font=font(hs);cx.textAlign='center';cx.lineWidth=14*k;cx.strokeStyle='#000';cx.fillStyle=st.hookcolor;
+    const ht=up?HOOK[o.lang].toUpperCase():HOOK[o.lang],hw=cx.measureText(ht).width,hf=hw>W*.88?W*.88/hw:1;
+    cx.font=font(hs*hf);cx.strokeText(ht,W/2,st.hookpos/100*H+hs*hf);cx.fillText(ht,W/2,st.hookpos/100*H+hs*hf);
+  }
+  const small=46*k;cx.font=font(small);cx.lineWidth=4*k;cx.strokeStyle='#000';
+  const lp=st.logopos,top=lp[0]==='t';
+  if(cl(st.logo)){cx.textAlign=lp[1]==='r'?'right':'left';cx.fillStyle='rgba(255,255,255,.85)';const lx=lp[1]==='r'?W-50*k:50*k,ly=top?100*k+small:H-300*k;cx.strokeText(cl(st.logo),lx,ly);cx.fillText(cl(st.logo),lx,ly)}
+  if(+st.part){const right=lp==='tl';cx.textAlign=right?'right':'left';cx.fillStyle='#ffe600';const px=right?W-50*k:50*k;cx.strokeText('PART 1/3',px,100*k+small);cx.fillText('PART 1/3',px,100*k+small)}
+  if(+st.bar){cx.fillStyle='rgba(255,255,255,.9)';cx.fillRect(0,10*k,W*((T%6000)/6000),14*k)}
+}
+function hlOnS(st){return st.hl.toLowerCase()!==st.text.toLowerCase()}
+
+/* ---------- UI builders ---------- */
+function seg(host,opts,get,set){
+  host.innerHTML='';
+  opts.forEach(([v,l])=>{const b=document.createElement('button');b.type='button';b.textContent=l;b.dataset.v=v;b.onclick=()=>{set(v);sync()};host.append(b)});
+  host._get=get;
+}
+function paintSeg(host){host.querySelectorAll('button').forEach(b=>b.classList.toggle('on',String(host._get())===b.dataset.v))}
+function mkItem(label,sub,w,h,paint,onclick,cls){
+  const b=document.createElement('button');b.type='button';b.className='it '+(cls||'');
+  const c=document.createElement('canvas');c.width=w;c.height=h;paint(c.getContext('2d'),w,h);
+  const s=document.createElement('span');s.textContent=label;b.append(c,s);
+  if(sub){const m=document.createElement('small');m.textContent=sub;b.append(m)}
+  b.onclick=onclick;return b;
+}
+const chips={},grs={};
+function tags(st){const t=[];if(+st.pop)t.push('Pop');if(+st.glow)t.push('Glow');if(+st.box)t.push('Box');if(hlOnS(st)&&!+st.pop)t.push('Highlight');if(st.upper==='1')t.push('CAPS');return t.slice(0,2).join(' · ')||'Plain'}
+for(const p of Object.keys(PRESETS)){
+  const st=Object.assign({},BASE,PRESETS[p]);
+  chips[p]=mkItem(p,tags(st),180,320,(cx,W,H)=>draw(cx,W,H,st,{mini:true,lang:'hi'}),()=>loadPreset(p));$('#chips').append(chips[p]);
+}
+for(const g of Object.keys(GRADES)){
+  grs[g]=mkItem(GRADES[g],'',136,136,(cx,W,H)=>{cx.save();cx.filter=GR[g]||'none';backdrop(cx,W,H);cx.restore()},()=>{S.grade=g;sync()},'gr');$('#grade').append(grs[g]);
+}
+function toggles(host,list,store){
+  list.forEach(t=>{const b=document.createElement('button');b.type='button';b.textContent=t[1];b.onclick=()=>{t[2]?t[2]():(S[t[0]]=+S[t[0]]?0:1);sync()};store[t[0]]=b;host.append(b)});
+}
+const tgB={},fxB={};
+toggles($('#tg'),TOG,tgB);
+toggles($('#fx'),[
+  ['hl','Word highlight',()=>{if(hlOn()){S.hlKeep=S.hl;S.hl=S.text}else S.hl=S.hlKeep||'#FFE600'}],
+  ['pop','Pop animation'],['glow','Neon glow'],['box','Text box'],
+  ['caps','ALL CAPS',()=>{S.upper=S.upper==='1'?'0':'1'}]
+],fxB);
+seg($('#posseg'),[['27','Bottom'],['45','Middle'],['68','Top']],()=>[27,45,68].reduce((a,b)=>Math.abs(b-S.pos)<Math.abs(a-S.pos)?b:a),v=>S.pos=+v);
+seg($('#wordseg'),[['1','1'],['2','2'],['3','3'],['4','4'],['5','5']],()=>S.words,v=>S.words=+v);
+seg($('#zoom'),[['off','Off'],['light','Light'],['strong','Strong']],()=>S.zoom,v=>S.zoom=v);
+seg($('#frame'),[['fit','Fit (blur sides)'],['fill','Fill (crop sides)']],()=>S.frame,v=>S.frame=v);
+seg($('#length'),[['30','30s'],['60','1m'],['120','2m'],['180','3m'],['240','4m'],['300','5m']],()=>F.length,v=>F.length=v);
+seg($('#count'),[['1','1'],['2','2'],['3','3'],['5','5']],()=>F.count,v=>F.count=v);
+seg($('#model'),[['base','Base (fast)'],['small','Small'],['medium','Medium']],()=>F.model,v=>F.model=v);
+
+const SL=[['size','Caption size',40,150,1,'adv1'],['pos','Height from bottom (%)',5,75,1,'adv1'],['ow','Outline thickness',0,20,1,'adv1'],
+  ['hooksize','Hook size',40,140,1,'adv2'],['hookpos','Hook from top (%)',4,40,1,'adv2'],['emsize','Sticker size',100,400,10,'adv2'],['every','Sticker at most every (seconds)',1,10,.5,'adv2'],['empos','Sticker up (+) / down (-)',-200,300,10,'adv2']];
+const CO=[['text','Text color','adv1'],['hl','Highlight color','adv1'],['outline','Outline color','adv1'],['hookcolor','Hook color','adv2']];
+for(const s of SL){const l=document.createElement('div');l.innerHTML='<span class="lbl">'+s[1]+': <b id="o_'+s[0]+'"></b></span><input type="range" id="'+s[0]+'" min="'+s[2]+'" max="'+s[3]+'" step="'+s[4]+'">';$('#'+s[5]).append(l);l.querySelector('input').oninput=e=>{S[s[0]]=+e.target.value;sync(true)}}
+for(const c of CO){const l=document.createElement('div');l.innerHTML='<span class="lbl">'+c[1]+'</span><input type="color" id="'+c[0]+'">';$('#'+c[2]).append(l);
+  l.querySelector('input').oninput=e=>{const v=e.target.value;if(c[0]==='text'){const was=hlOn();S.text=v;if(!was)S.hl=v}else{S[c[0]]=v;if(c[0]==='hl')S.hlKeep=v}sync(true)}}
+$('#adv1').insertAdjacentHTML('beforeend','<span class="lbl">Letter case</span><select id="upper"><option value="auto">Auto (CAPS for English)</option><option value="1">Always CAPS</option><option value="0">As spoken</option></select>');
+$('#adv2').insertAdjacentHTML('beforeend','<span class="lbl">Your own word → emoji pairs</span><input id="emap" placeholder="chai:☕|gola:🎯"><p class="hint">Separate pairs with | and use word:emoji. The sticker changes whenever one of these words is spoken.</p>');
+$('#upper').onchange=e=>{S.upper=e.target.value;sync(true)};
+$('#logopos').onchange=e=>{S.logopos=e.target.value;sync(true)};
+for(const k of ['logo','logoimg','emap'])$('#'+k).oninput=e=>{S[k]=e.target.value;sync(true)};
+
+function loadPreset(p){
+  const keep={};for(const k of ['zoom','frame','grade','hook','emoji','jump','part','bar','sfx','logo','logopos','logoimg','emap','every','empos','emsize','hooksize','hookcolor','hookpos'])keep[k]=S[k];
+  Object.assign(S,PRESETS[p],keep);S.preset=p;S.hlKeep=hlOnS(PRESETS[p])?PRESETS[p].hl:'#FFE600';sync();
+}
+function buildCode(){
+  return 'preset='+S.preset+';size='+S.size+';text='+hx(S.text)+';hl='+hx(S.hl)+';outline='+hx(S.outline)+';ow='+S.ow+';pos='+S.pos+';upper='+S.upper+';words='+S.words+';pop='+(+S.pop)+';box='+(+S.box)+';glow='+(+S.glow)+';hooksize='+S.hooksize+';hookcolor='+hx(S.hookcolor)+';hookpos='+S.hookpos+';emsize='+S.emsize+';zoom='+S.zoom+';frame='+S.frame+';grade='+S.grade+';hook='+(+S.hook)+';emoji='+(+S.emoji)+';jump='+(+S.jump)+';part='+(+S.part)+';bar='+(+S.bar)+';sfx='+(+S.sfx)+';every='+S.every+';empos='+S.empos+(cl(S.emap)?';emap='+S.emap.replace(/[;=]/g,''):'')+(cl(S.logo)?';logo='+cl(S.logo)+';logopos='+S.logopos:'')+(cl(S.logoimg)?';logoimg='+cl(S.logoimg):'');
+}
+function sync(fromInput){
+  for(const p in chips)chips[p].classList.toggle('on',p===S.preset);
+  for(const g in grs)grs[g].classList.toggle('on',g===S.grade);
+  for(const k in tgB)tgB[k].classList.toggle('on',!!+S[k]);
+  fxB.hl.classList.toggle('on',hlOn());fxB.pop.classList.toggle('on',!!+S.pop);fxB.glow.classList.toggle('on',!!+S.glow);fxB.box.classList.toggle('on',!!+S.box);fxB.caps.classList.toggle('on',S.upper==='1');
+  ['zoom','frame','length','count','model','posseg','wordseg'].forEach(id=>paintSeg($('#'+id)));
+  for(const s of SL){$('#o_'+s[0]).textContent=S[s[0]];if(!fromInput)$('#'+s[0]).value=S[s[0]]}
+  if(!fromInput){for(const c of CO)$('#'+c[0]).value=S[c[0]];$('#upper').value=String(S.upper);$('#logopos').value=S.logopos;for(const k of ['logo','logoimg','emap'])$('#'+k).value=S[k]}
+  $('#code').value=buildCode();
+  ls.set('ck_S',JSON.stringify(S));ls.set('ck_F',JSON.stringify(F));
+}
+
+/* ---------- preview loops ---------- */
+const cv=$('#cv'),cx=cv.getContext('2d'),mc=$('#mc').getContext('2d'),t0=performance.now();let tick=0,miniOn=false;
+(function loop(){
+  const o={lang,bg,tick:tick++,t:performance.now()-t0};
+  draw(cx,270,480,S,o);
+  if(miniOn)draw(mc,108,192,S,o);
+  requestAnimationFrame(loop);
+})();
+new IntersectionObserver(es=>{miniOn=!es[0].isIntersecting;$('#mini').classList.toggle('show',miniOn)},{threshold:.15}).observe($('#stage'));
+$('#mini').onclick=()=>$('#stage').scrollIntoView({behavior:'smooth'});
+$('#lang').onclick=()=>{lang=lang==='hi'?'en':'hi';$('#lang').textContent='Preview text: '+(lang==='hi'?'हिंदी':'English')};
+$('#vf').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const v=document.createElement('video');v.muted=true;v.playsInline=true;v.src=URL.createObjectURL(f);
+  v.onloadedmetadata=()=>{v.currentTime=Math.min(3,(v.duration||3)/2)};
+  v.onseeked=()=>{const c=document.createElement('canvas');c.width=270;c.height=480;const x=c.getContext('2d'),sw=v.videoHeight*9/16;
+    if(sw<=v.videoWidth)x.drawImage(v,(v.videoWidth-sw)/2,0,sw,v.videoHeight,0,0,270,480);else x.drawImage(v,0,0,270,480);bg=c;URL.revokeObjectURL(v.src);toast('Your video frame is now the preview background','ok')};
+  v.onerror=()=>toast('Could not read that video','bad');
+};
+
+/* ---------- saved values ---------- */
+for(const k of ['token','owner','repo','wf','ref'])$('#'+k).value=ls.get('ck_'+k,$('#'+k).value);
+try{Object.assign(S,JSON.parse(ls.get('ck_S','{}')))}catch(_){}
+try{Object.assign(F,JSON.parse(ls.get('ck_F','{}')))}catch(_){}
+try{const f=JSON.parse(ls.get('ck_form','{}'));for(const k of ['url','ranges','custom'])if(f[k]!==undefined)$('#'+k).value=f[k]}catch(_){}
+sync();
+
+/* ---------- app icon + install info, generated from the logo above ---------- */
+(function(){
+  try{
+    const svg=$('#brand').outerHTML.replace('<svg','<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512"');
+    const img=new Image();
+    img.onload=()=>{
+      const mk=n=>{const c=document.createElement('canvas');c.width=c.height=n;c.getContext('2d').drawImage(img,0,0,n,n);return c.toDataURL('image/png')};
+      const small=mk(192),big=mk(512);
+      $('link[rel=icon]').href=small;
+      const a=document.createElement('link');a.rel='apple-touch-icon';a.href=small;document.head.append(a);
+      const base=location.href.split('#')[0].split('?')[0];
+      const m={name:'ClipKaro',short_name:'ClipKaro',start_url:base,scope:base.replace(/[^/]*$/,''),display:'standalone',background_color:'#0b0b10',theme_color:'#0b0b10',icons:[{src:small,sizes:'192x192',type:'image/png'},{src:big,sizes:'512x512',type:'image/png'}]};
+      const l=document.createElement('link');l.rel='manifest';l.href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/manifest+json'}));document.head.append(l);
+    };
+    img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+  }catch(_){}
+})();
+
+/* ---------- GitHub connection ---------- */
+const cfg=()=>({t:$('#token').value.trim(),o:$('#owner').value.trim(),r:$('#repo').value.trim(),w:$('#wf').value.trim(),ref:$('#ref').value.trim()});
+async function gh(path,opt={}){const c=cfg();return fetch('https://api.github.com/repos/'+encodeURIComponent(c.o)+'/'+encodeURIComponent(c.r)+path,Object.assign({headers:{'Accept':'application/vnd.github+json','Authorization':'Bearer '+c.t,'X-GitHub-Api-Version':'2022-11-28'}},opt))}
+function explain(r){
+  if(r.status===401)return 'Token is wrong or expired. Create a new one and paste it in Settings.';
+  if(r.status===403)return 'The token needs Actions: Read and write on this repository.';
+  if(r.status===404)return 'Repository or workflow file not found, or the token has no access to this repository.';
+  if(r.status===422)return 'The workflow inputs do not match. Make sure main.yml is the latest version.';
+  return 'GitHub replied with status '+r.status;
+}
+function openSheet(v){$('#sheet').classList.toggle('open',v)}
+$('#gear').onclick=()=>openSheet(true);
+$('#sheet').onclick=e=>{if(e.target.id==='sheet')openSheet(false)};
+function cmsg(t,c){const m=$('#cmsg');m.textContent=t;m.className='msg '+(c||'')}
+$('#test').onclick=async()=>{
+  const c=cfg();if(!c.t){cmsg('Paste your token first.','bad');return}
+  cmsg('Checking…');
+  try{
+    const r=await gh('');if(!r.ok){cmsg(explain(r),'bad');return}
+    const w=await gh('/actions/workflows/'+encodeURIComponent(c.w));
+    if(!w.ok){cmsg('Repository found, but workflow file "'+c.w+'" was not found. Check the file name.','bad');return}
+    const j=await w.json();cmsg('Connected ✓  '+c.o+'/'+c.r+' · workflow: '+j.name,'ok');
+  }catch(e){cmsg('Network problem: '+e.message,'bad')}
+};
+$('#save').onclick=()=>{for(const k of ['token','owner','repo','wf','ref'])ls.set('ck_'+k,$('#'+k).value.trim());openSheet(false);toast('Saved','ok');loadRuns()};
+if(!$('#token').value)openSheet(true);
+
+/* ---------- run, status, download ---------- */
+let timer=null,since=0;
+$('#go').onclick=async()=>{
+  const c=cfg(),url=$('#url').value.trim();
+  if(!c.t){openSheet(true);toast('Connect GitHub first','bad');return}
+  if(!url){$('#url').scrollIntoView({behavior:'smooth',block:'center'});$('#url').focus();toast('Paste your video link first','bad');return}
+  ls.set('ck_form',JSON.stringify({url,ranges:$('#ranges').value,custom:$('#custom').value}));
+  const settings=$('#custom').value.trim()||buildCode();
+  $('#go').disabled=true;$('#go').textContent='Sending…';
+  try{
+    since=Date.now()-15000;
+    const r=await gh('/actions/workflows/'+encodeURIComponent(c.w)+'/dispatches',{method:'POST',body:JSON.stringify({ref:c.ref,inputs:{url,settings,length:F.length,count:F.count,ranges:$('#ranges').value.trim(),model:F.model}})});
+    if(r.status!==204){toast(explain(r),'bad')}
+    else{toast('Started! Scroll down to see progress','ok');showStatus('run','Starting…','');clearInterval(timer);timer=setInterval(poll,8000);setTimeout(poll,3000);$('#status').scrollIntoView({behavior:'smooth',block:'center'})}
+  }catch(e){toast('Network problem: '+e.message,'bad')}
+  $('#go').disabled=false;$('#go').textContent='Generate clips';
+};
+function showStatus(kind,t,s,btns){
+  $('#status').hidden=false;$('#st_d').className='dot '+kind;$('#st_t').textContent=t;$('#st_s').textContent=s||'';
+  $('#st_bar').hidden=kind!=='run';
+  const b=$('#st_b');b.innerHTML='';(btns||[]).forEach(x=>b.append(x));
+}
+function btn(label,fn,pri){const e=document.createElement('button');e.type='button';e.textContent=label;e.className='btn';if(pri)e.style.cssText='background:var(--g);border:0;color:#fff';e.onclick=fn;return e}
+const fmt=ms=>{const s=Math.max(0,Math.floor(ms/1000));return Math.floor(s/60)+' min '+(s%60)+' s'};
+async function poll(){
+  try{
+    const c=cfg(),r=await gh('/actions/workflows/'+encodeURIComponent(c.w)+'/runs?event=workflow_dispatch&per_page=5');
+    if(!r.ok){showStatus('bad','Could not read status',explain(r));return}
+    const j=await r.json(),run=(j.workflow_runs||[]).find(x=>new Date(x.created_at).getTime()>=since);
+    if(!run){showStatus('run','Looking for your run…','');return}
+    const st0=new Date(run.run_started_at||run.created_at).getTime(),open=btn('Open run on GitHub',()=>window.open(run.html_url,'_blank'));
+    if(run.status!=='completed'){showStatus('run',run.status==='queued'?'Waiting in queue…':'Making your clips…','Running for '+fmt(Date.now()-st0)+'. You can close this page and come back later.',[open]);return}
+    clearInterval(timer);
+    if(run.conclusion==='success')showStatus('ok','Clips are ready','Total time '+fmt(new Date(run.updated_at)-st0),[btn('Download ZIP',()=>download(run.id),true),open]);
+    else showStatus('bad','Run failed','Result: '+run.conclusion+'. Open the run and send a screenshot of the red step.',[open]);
+    loadRuns();
+  }catch(e){showStatus('bad','Connection problem',e.message)}
+}
+async function download(id){
+  try{
+    toast('Downloading ZIP…');
+    const a=await (await gh('/actions/runs/'+id+'/artifacts')).json(),art=(a.artifacts||[]).find(x=>x.name==='clips')||(a.artifacts||[])[0];
+    if(!art){toast('No ZIP found. Open the run and check Artifacts.','bad');return}
+    const z=await gh('/actions/artifacts/'+art.id+'/zip');if(!z.ok)throw new Error('status '+z.status);
+    const link=document.createElement('a');link.href=URL.createObjectURL(await z.blob());link.download='clipkaro-clips.zip';
+    document.body.appendChild(link);link.click();link.remove();toast('Saved to Downloads ✓','ok');
+  }catch(e){toast('Direct download failed ('+e.message+'). Use “Open run on GitHub” → Artifacts.','bad')}
+}
+async function loadRuns(){
+  const c=cfg();if(!c.t)return;
+  try{
+    const r=await gh('/actions/workflows/'+encodeURIComponent(c.w)+'/runs?per_page=5');if(!r.ok)return;
+    const j=await r.json(),h=$('#hist');
+    if(!(j.workflow_runs||[]).length){h.innerHTML='<span class="hint">Nothing yet. Your clips will show up here.</span>';return}
+    h.innerHTML='';
+    for(const x of j.workflow_runs){
+      const d=document.createElement('div');d.className='run';
+      const st=x.status!=='completed'?'⏳ Running':x.conclusion==='success'?'✅ Ready':'❌ Failed';
+      const when=new Date(x.created_at).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+      const left=document.createElement('span');left.textContent=st+' · '+when;
+      const right=document.createElement('span');right.style.cssText='display:flex;gap:6px';
+      const b1=btn('ZIP',()=>download(x.id)),b2=btn('Open',()=>window.open(x.html_url,'_blank'));b1.className=b2.className='btn sm';
+      if(x.status==='completed'&&x.conclusion==='success')right.append(b1);
+      right.append(b2);d.append(left,right);h.append(d);
+    }
+  }catch(_){}
+}
+loadRuns();
+</script>
+</body>
+</html>
